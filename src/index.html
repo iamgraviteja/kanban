@@ -44,30 +44,36 @@
       <div class="grid grid-cols-3 gap-4 h-full">
         <!-- Column 1 -->
         <div class="bg-slate-200 shadow-md p-4 rounded">
-          <h2 class="text-xl font-medium mb-2 text-center">To Do</h2>
+          <h2 class="text-xl font-medium mb-2 sm:text-center md:text-left">
+            To Do
+          </h2>
           <div
             id="todoCont"
-            class="tasks-container h-full"
+            class="tasks-container h-full grid grid-col-1 auto-rows-max xl:grid-cols-2 gap-4"
             data-stage="0"
           ></div>
         </div>
 
         <!-- Column 2 -->
         <div class="bg-slate-300 shadow-md p-4 rounded">
-          <h2 class="text-xl font-medium mb-2 text-center">In Progress</h2>
+          <h2 class="text-xl font-medium mb-2 sm:text-center md:text-left">
+            In Progress
+          </h2>
           <div
             id="inProgCont"
-            class="tasks-container h-full"
+            class="tasks-container h-full grid grid-col-1 auto-rows-max xl:grid-cols-2 gap-4"
             data-stage="1"
           ></div>
         </div>
 
         <!-- Column 3 -->
         <div class="bg-slate-400 shadow-md p-4 rounded">
-          <h2 class="text-xl font-medium mb-2 text-center">Completed</h2>
+          <h2 class="text-xl font-medium mb-2 sm:text-center md:text-left">
+            Completed
+          </h2>
           <div
             id="compCont"
-            class="tasks-container h-full"
+            class="tasks-container h-full grid grid-col-1 auto-rows-max xl:grid-cols-2 gap-4"
             data-stage="2"
           ></div>
         </div>
