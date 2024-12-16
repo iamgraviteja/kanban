@@ -22,22 +22,23 @@ const inProgContainer = query("#inProgCont");
 const compContainer = query("#compCont");
 const filterPriority = query("#filterPriority");
 
+const resetForm = () => {
+  taskDesc.value = "";
+  createPriority.value = "";
+  priority = "";
+};
+
 const openPopup = () => {
   modal.classList.remove("hidden");
 };
 
 const closePopup = () => {
   modal.classList.add("hidden");
+  resetForm();
 };
 
 const handleOnClosePopup = () => {
   closePopup();
-};
-
-const resetForm = () => {
-  taskDesc.value = "";
-  createPriority.value = "";
-  priority = "";
 };
 
 const createTaskCard = (task) => {
@@ -49,7 +50,7 @@ const createTaskCard = (task) => {
     "shadow-sm",
     "hover:shadow-lg",
     "h-40",
-    "mb-4",
+    "transition",
     "cursor-pointer",
     "draggable"
   );
