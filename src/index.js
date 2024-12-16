@@ -15,6 +15,7 @@ const createPriority = query("#createPriority");
 const todoContainer = query("#todoCont");
 const inProgContainer = query("#inProgCont");
 const compContainer = query("#compCont");
+const filterPriority = query("#filterPriority");
 
 const openPopup = () => {
   modal.classList.remove("hidden");
@@ -101,8 +102,51 @@ const getTasksByStage = (tasks, stage) => {
   return tasks.filter((task) => task.stage == stage);
 };
 
-const init = () => {
-  // Get tasks from local storage.
+const getTasksByPriority = (tasks, priority) => {
+  return tasks.filter((task) => task.priority == priority);
+};
+
+const handleOnPriorityFilter = (event) => {
+  const priority = event.target.value;
+  todoContainer.replaceChildren();
+  inProgContainer.replaceChildren();
+  compContainer.replaceChildren();
+  if (priority) {
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const priorityTasks = getTasksByPriority(tasks, priority);
+    if (priorityTasks.length) {
+      const todoTasks = getTasksByStage(priorityTasks, 1);
+
+      if (todoTasks.length) {
+        todoTasks.forEach((task) => {
+          const taskCard = createTaskCard(task);
+          todoContainer.appendChild(taskCard);
+        });
+      }
+
+      const inProgTasks = getTasksByStage(priorityTasks, 2);
+
+      if (inProgTasks.length) {
+        inProgTasks.forEach((task) => {
+          const taskCard = createTaskCard(task);
+          inProgContainer.appendChild(taskCard);
+        });
+      }
+
+      const compTasks = getTasksByStage(priorityTasks, 3);
+      if (compTasks.length) {
+        compTasks.forEach((task) => {
+          const taskCard = createTaskCard(task);
+          compContainer.appendChild(taskCard);
+        });
+      }
+    }
+  } else {
+    loadSavedTasks();
+  }
+};
+
+const loadSavedTasks = () => {
   const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
   if (tasks.length) {
     const todoTasks = getTasksByStage(tasks, 1);
@@ -131,6 +175,11 @@ const init = () => {
       });
     }
   }
+};
+
+const init = () => {
+  // Get tasks from local storage.
+  loadSavedTasks();
   // Event listeners
   addTask.addEventListener("click", openPopup);
   closeModalBtn.addEventListener("click", closePopup);
@@ -138,5 +187,6 @@ const init = () => {
   taskDesc.addEventListener("input", handleOnTaskChange);
   createTask.addEventListener("click", handleOnCreateTask);
   createPriority.addEventListener("change", handlePriorityChange);
+  filterPriority.addEventListener("change", handleOnPriorityFilter);
 };
 init();
