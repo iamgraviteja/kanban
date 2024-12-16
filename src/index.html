@@ -19,14 +19,14 @@
             >Filter Priority</label
           >
           <select
-            id="sel-color"
+            id="filterPriority"
             class="block w-30 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none text-gray-700"
           >
             <option value="">Select</option>
-            <option value="red">Red</option>
-            <option value="blue">Blue</option>
-            <option value="green">Green</option>
-            <option value="yellow">Yellow</option>
+            <option value="0">Red</option>
+            <option value="1">Blue</option>
+            <option value="2">Green</option>
+            <option value="3">Yellow</option>
           </select>
         </div>
         <div class="ml-4">
@@ -44,25 +44,31 @@
         <!-- Column 1 -->
         <div class="bg-slate-200 shadow-md p-4 rounded">
           <h2 class="text-xl font-medium mb-2 text-center">To Do</h2>
-          <div id="todoCont" class="tasks-container">
-            <!-- <div class="task bg-white shadow-sm hover:shadow-lg h-40">
-              <div class="bg-rose-600 h-3 w-full"></div>
-              <div class="m-2">test id</div>
-              <div class="m-2">Task name</div>
-            </div> -->
-          </div>
+          <div
+            id="todoCont"
+            class="tasks-container h-full"
+            data-stage="0"
+          ></div>
         </div>
 
         <!-- Column 2 -->
         <div class="bg-slate-300 shadow-md p-4 rounded">
           <h2 class="text-xl font-medium mb-2 text-center">In Progress</h2>
-          <div id="inProgCont" class="tasks-container"></div>
+          <div
+            id="inProgCont"
+            class="tasks-container h-full"
+            data-stage="1"
+          ></div>
         </div>
 
         <!-- Column 3 -->
         <div class="bg-slate-400 shadow-md p-4 rounded">
           <h2 class="text-xl font-medium mb-2 text-center">Completed</h2>
-          <div id="compCont" class="tasks-container"></div>
+          <div
+            id="compCont"
+            class="tasks-container h-full"
+            data-stage="2"
+          ></div>
         </div>
       </div>
       <!-- Modal start -->

@@ -3,6 +3,11 @@ let isModelOpen = false;
 let priority = "";
 
 const colors = ["bg-rose-400", "bg-blue-400", "bg-green-400", "bg-yellow-400"];
+const STAGES = {
+  todo: 0,
+  inProgress: 1,
+  completed: 2,
+};
 const query = (selector) => document.querySelector(selector);
 
 const modal = query("#modal");
@@ -15,6 +20,7 @@ const createPriority = query("#createPriority");
 const todoContainer = query("#todoCont");
 const inProgContainer = query("#inProgCont");
 const compContainer = query("#compCont");
+const filterPriority = query("#filterPriority");
 
 const openPopup = () => {
   modal.classList.remove("hidden");
@@ -26,10 +32,6 @@ const closePopup = () => {
 
 const handleOnClosePopup = () => {
   closePopup();
-};
-
-const handleOnTaskChange = (event) => {
-  let value = event.target.value.trim();
 };
 
 const resetForm = () => {
@@ -48,8 +50,11 @@ const createTaskCard = (task) => {
     "hover:shadow-lg",
     "h-40",
     "mb-4",
-    "cursor-pointer"
+    "cursor-pointer",
+    "draggable"
   );
+  taskCard.setAttribute("draggable", true);
+  taskCard.setAttribute("id", id);
   taskCard.innerHTML = `<div class="${colors[priority]} h-3 w-full"></div>
                     <div class="m-2">${id}</div>
                     <div class="m-2">${name}</div>`;
@@ -73,7 +78,7 @@ const createNewTask = (taskName, id, priority) => {
       id,
       name: taskName,
       priority,
-      stage: 1,
+      stage: 0,
     };
     tasks.push(newTask);
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -101,11 +106,58 @@ const getTasksByStage = (tasks, stage) => {
   return tasks.filter((task) => task.stage == stage);
 };
 
-const init = () => {
-  // Get tasks from local storage.
+const getTasksByPriority = (tasks, priority) => {
+  return tasks.filter((task) => task.priority == priority);
+};
+
+const handleOnPriorityFilter = (event) => {
+  const priority = event.target.value;
+
+  // Remove all the cards from all containers.
+  todoContainer.replaceChildren();
+  inProgContainer.replaceChildren();
+  compContainer.replaceChildren();
+
+  // If a priority is selected.
+  if (priority) {
+    const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const priorityTasks = getTasksByPriority(tasks, priority);
+    if (priorityTasks.length) {
+      const todoTasks = getTasksByStage(priorityTasks, STAGES.todo);
+
+      if (todoTasks.length) {
+        todoTasks.forEach((task) => {
+          const taskCard = createTaskCard(task);
+          todoContainer.appendChild(taskCard);
+        });
+      }
+
+      const inProgTasks = getTasksByStage(priorityTasks, STAGES.inProgress);
+
+      if (inProgTasks.length) {
+        inProgTasks.forEach((task) => {
+          const taskCard = createTaskCard(task);
+          inProgContainer.appendChild(taskCard);
+        });
+      }
+
+      const compTasks = getTasksByStage(priorityTasks, STAGES.completed);
+      if (compTasks.length) {
+        compTasks.forEach((task) => {
+          const taskCard = createTaskCard(task);
+          compContainer.appendChild(taskCard);
+        });
+      }
+    }
+  } else {
+    loadSavedTasks();
+  }
+};
+
+const loadSavedTasks = () => {
   const tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
   if (tasks.length) {
-    const todoTasks = getTasksByStage(tasks, 1);
+    const todoTasks = getTasksByStage(tasks, STAGES.todo);
 
     if (todoTasks.length) {
       todoTasks.forEach((task) => {
@@ -114,7 +166,7 @@ const init = () => {
       });
     }
 
-    const inProgTasks = getTasksByStage(tasks, 2);
+    const inProgTasks = getTasksByStage(tasks, STAGES.inProgress);
 
     if (inProgTasks.length) {
       inProgTasks.forEach((task) => {
@@ -123,7 +175,7 @@ const init = () => {
       });
     }
 
-    const compTasks = getTasksByStage(tasks, 3);
+    const compTasks = getTasksByStage(tasks, STAGES.completed);
     if (compTasks.length) {
       compTasks.forEach((task) => {
         const taskCard = createTaskCard(task);
@@ -131,12 +183,47 @@ const init = () => {
       });
     }
   }
+};
+
+const handleOnDragOver = (event) => {
+  event.preventDefault();
+};
+
+const handleOnDrop = (event) => {
+  event.preventDefault();
+  const stage = event.currentTarget.getAttribute("data-stage");
+  const tasks = JSON.parse(localStorage.getItem("tasks"));
+  const id = event.dataTransfer.getData("text/plain");
+  const ind = tasks.findIndex((task) => task.id == id);
+  tasks[ind].stage = parseInt(stage);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  document.getElementById(id).remove();
+  event.currentTarget.appendChild(createTaskCard(tasks[ind]));
+};
+
+const containers = document.querySelectorAll(".tasks-container");
+
+containers.forEach((container) => {
+  container.addEventListener("drop", handleOnDrop);
+  container.addEventListener("dragover", handleOnDragOver);
+});
+
+const init = () => {
+  // Get tasks from local storage.
+  loadSavedTasks();
   // Event listeners
   addTask.addEventListener("click", openPopup);
   closeModalBtn.addEventListener("click", closePopup);
   closeFooterBtn.addEventListener("click", handleOnClosePopup);
-  taskDesc.addEventListener("input", handleOnTaskChange);
   createTask.addEventListener("click", handleOnCreateTask);
   createPriority.addEventListener("change", handlePriorityChange);
+  filterPriority.addEventListener("change", handleOnPriorityFilter);
+
+  const draggableElems = document.querySelectorAll(".tasks-container");
+  draggableElems.forEach((draggableElem) => {
+    draggableElem.addEventListener("dragstart", (event) => {
+      event.dataTransfer.setData("text/plain", event.target.id);
+    });
+  });
 };
 init();
