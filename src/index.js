@@ -71,7 +71,7 @@ const createNewTask = (taskName, id, priority) => {
     return;
   } else {
     const storedTasks = localStorage.getItem("tasks");
-    const tasks = [];
+    let tasks = [];
     if (storedTasks) {
       tasks = JSON.parse(storedTasks);
     }
